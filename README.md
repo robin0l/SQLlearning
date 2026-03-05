@@ -63,8 +63,6 @@ BEGIN TRAN;
 DELETE FROM dbo.valeo_table
 WHERE image1 IS NULL;
 
-
-
 ALTER TABLE dbo.valeo_table
 DROP COLUMN Date_Created;
 
