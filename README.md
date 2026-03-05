@@ -1,1 +1,79 @@
-# SQLlearning
+USE sql_practice;
+GO
+
+SELECT * 
+FROM dbo.valeo_table;
+
+EXEC sp_help 'dbo.valeo_table';
+
+-- List schema + table names (to avoid dbo/bdo mistakes)
+SELECT TABLE_SCHEMA, TABLE_NAME
+FROM INFORMATION_SCHEMA.TABLES;
+
+-- List column names + data types (minimal view)
+SELECT COLUMN_NAME, DATA_TYPE
+FROM INFORMATION_SCHEMA.COLUMNS
+WHERE TABLE_NAME = 'valeo_table';
+
+
+SELECT COUNT(*) AS total_rows
+FROM dbo.valeo_table;
+
+-- Non-null count for specific columns
+SELECT
+    COUNT(*) AS total_rows,
+    COUNT(image1) AS image1_not_null,
+    COUNT(Variation_SKU) AS variation_sku_not_null
+FROM dbo.valeo_table;
+
+-- NULL count formula (important)
+-- NULL count = COUNT(*) - COUNT(column)
+SELECT 
+    COUNT(*) - COUNT(image1) AS image1_null_count
+FROM dbo.valeo_table;
+
+
+-- Preview rows where a column is NULL
+SELECT *
+FROM dbo.valeo_table
+WHERE image1 IS NULL;
+
+-- Rows where multiple columns are NULL
+SELECT *
+FROM dbo.valeo_table
+WHERE image1 IS NULL
+  AND Variation_SKU IS NULL;
+
+SELECT *
+FROM dbo.valeo_table
+WHERE image1 IS NULL;
+
+-- Delete rows where a column is NULL
+DELETE FROM dbo.valeo_table
+WHERE image1 IS NULL;
+
+-- Delete rows if ANY of multiple columns are NULL
+DELETE FROM dbo.valeo_table
+WHERE image1 IS NULL
+   OR Variation_SKU IS NULL;
+
+-- Transaction-safe delete (rollback option)
+BEGIN TRAN;
+
+DELETE FROM dbo.valeo_table
+WHERE image1 IS NULL;
+
+
+
+ALTER TABLE dbo.valeo_table
+DROP COLUMN Date_Created;
+
+ALTER TABLE dbo.valeo_table
+DROP COLUMN image1, Unused_Column;
+
+EXEC sp_rename 'dbo.[Valeo Export miulti-channel 29k SKUs CSV]', 'valeo_table';
+
+-- Check database collation
+SELECT name, collation_name
+FROM sys.databases
+WHERE name = DB_NAME();
